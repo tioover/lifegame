@@ -2,7 +2,7 @@ var live = true;
 var dead = false;
 
 $(document).ready(function(){
-    var matrix = init(100, 50);
+    var matrix = init(50, 25);
     matrix = set(matrix);
     show(matrix);
     setInterval(function(){
@@ -10,6 +10,23 @@ $(document).ready(function(){
         show(matrix);
     }, 500);
 });
+
+function trave(matrix, func)
+{
+    //abstract
+    var max = xymax(matrix);
+    var x = y = 0;
+    while (x < max.x)
+    {
+        while (y < max.y)
+        {
+            func(x, y);
+            ++ y;
+        }
+        ++ x;
+        y = 0;
+    }
+}
 
 function init(x_max, y_max)
 {
@@ -31,15 +48,27 @@ function init(x_max, y_max)
 
 function set(matrix)
 {
-    matrix[20][1] = live;
-    matrix[21][1] = live;
-    matrix[22][1] = live;
+    //fly
+    /*matrix[40][21] = live;
+    matrix[41][21] = live;
+    matrix[42][21] = live;
+    matrix[40][22] = live;
+    matrix[41][23] = live;*/
+    //long
+    var base_x = 20;
+    matrix[base_x][7] = live;
+    matrix[base_x + 1][1] = live;
+    matrix[base_x + 1][2] = live;
+    matrix[base_x + 2][2] = live;
+    matrix[base_x + 2][6] = live;
+    matrix[base_x + 2][7] = live;
+    matrix[base_x + 2][8] = live;
     return matrix;
 }
 
 function next(matrix)
 {
-    var max = mmax(matrix);
+    var max = xymax(matrix);
     var next_matrix = init(max.x, max.y);
     trave(matrix, function(x, y){
         var adja_num = adjacent_cell_num(matrix, x, y);
@@ -82,8 +111,9 @@ function adjacent_cell_num(matrix, x, y)
     return num;
 }
 
-function mmax(matrix)
+function xymax(matrix)
 {
+    //max pos
     var x_max = matrix.length;
     var y_max = matrix[0].length;
     var max = {"x": x_max, "y": y_max};
@@ -92,16 +122,19 @@ function mmax(matrix)
 
 function show(matrix)
 {
+    //show all cell.
     var id = "main";
     var radius = 10;
     var canvas = document.getElementById(id);
     clear(canvas);
     trave(matrix, function(x, y){
-        cell_write(canvas, radius, x, y, matrix[x][y]);
+        var context = cell_write(canvas, radius, x, y, matrix[x][y]);
     });
+    return canvas;
 }
 
 function clear(id){
+    //clear canvas.
     var id = "main";
     var canvas = document.getElementById(id);
     var context = canvas.getContext("2d");
@@ -122,21 +155,6 @@ function cell_write(canvas, radius, x, y, cell)
     else
         context.fillStyle = "#CCC";
     context.fill();
-
+    return context;
 }
 
-function trave(matrix, func)
-{
-    var max = mmax(matrix);
-    var x = y = 0;
-    while (x < max.x)
-    {
-        while (y < max.y)
-        {
-            func(x, y);
-            ++ y;
-        }
-        ++ x;
-        y = 0;
-    }
-}
