@@ -1,14 +1,14 @@
 var LIVE= true;
 var DEAD= false;
-var XMAX = 1000;
-var YMAX = 1000;
+var XMAX = 80;
+var YMAX = 80;
 
 $(document).ready(function()
 {
     var matrix = init();
     matrix = set_all(matrix);
     show(matrix);
-    step_time = 100;
+    step_time = 300;
     setInterval(function(){
         matrix = nextstep(matrix);
         show(matrix);
